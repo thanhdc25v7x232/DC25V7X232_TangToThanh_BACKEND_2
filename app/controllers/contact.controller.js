@@ -13,7 +13,7 @@ exports.create = async (req, res, next) => {
     return res.send(document);
   } catch (error) {
     return next(
-      new ApiError(500, "An error occurred while creating the contact")
+      new ApiError(500, "An error occurred while creating the contact"),
     );
   }
 };
@@ -31,7 +31,7 @@ exports.findAll = async (req, res, next) => {
     }
   } catch (error) {
     return next(
-      new ApiError(500, "An error occurred while retrieving contacts")
+      new ApiError(500, "An error occurred while retrieving contacts"),
     );
   }
 
@@ -48,13 +48,13 @@ exports.findOne = async (req, res, next) => {
     return res.send(document);
   } catch (error) {
     return next(
-      new ApiError(500, `Error retrieving contact with id=${req.params.id}`)
+      new ApiError(500, `Error retrieving contact with id=${req.params.id}`),
     );
   }
 };
 
 exports.update = async (req, res, next) => {
- if (!req.body || Object.keys(req.body).length === 0) {
+  if (!req.body || Object.keys(req.body).length === 0) {
     return next(new ApiError(400, "Data to update can not be empty"));
   }
 
@@ -67,13 +67,24 @@ exports.update = async (req, res, next) => {
     return res.send({ message: "Contact was updated successfully" });
   } catch (error) {
     return next(
-      new ApiError(500, `Error updating contact with id=${req.params.id}`)
+      new ApiError(500, `Error updating contact with id=${req.params.id}`),
     );
   }
 };
 
-exports.delete = (req, res) => {
-  res.send({ message: "delete handler" });
+exports.delete = async (req, res, next) => {
+  try {
+    const contactService = new ContactService(MongoDB.client);
+    const document = await contactService.delete(req.params.id);
+    if (!document) {
+      return next(new ApiError(404, "Contact not found"));
+    }
+    return res.send({ message: "Contact was deleted successfully" });
+  } catch (error) {
+    return next(
+      new ApiError(500, `Could not delete contact with id=${req.params.id}`),
+    );
+  }
 };
 
 exports.deleteAll = (req, res) => {
