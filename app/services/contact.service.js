@@ -12,6 +12,7 @@ class ContactService {
       address: payload.address,
       phone: payload.phone,
       favorite: payload.favorite,
+      interests: payload.interests,
     };
     // Xóa các trường undefined
     Object.keys(contact).forEach(
