@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const contactsRouter = require("./app/routes/contact.route");
+const authRouter = require("./app/routes/auth.route");
 const ApiError = require("./app/api-error"); // MỚI
 
 const app = express();
@@ -13,6 +14,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/contacts", contactsRouter);
+app.use("/api/auth", authRouter);
 
 // MỚI: handle 404 response
 app.use((req, res, next) => {
